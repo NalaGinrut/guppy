@@ -1,5 +1,5 @@
-#ifndef __GUPPY_CEE_REPOSITORY_H__
-#define __GUPPY_CEE_REPOSITIRY_H__
+#ifndef __GUPPY_CEE_OID_H__
+#define __GUPPY_CEE_OID_H__
 /*	
  *  Copyright (C) 2012
  *	"Mu Lei" known as "NalaGinrut" <mulei@gnu.org>
@@ -18,11 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define SCM_ASSERT_REPOSITORY(x) \
-  scm_assert_smob_type(scm_git_repository_tag ,(x))
+SCM scm_mmr_git_oid_fmt(SCM string ,SCM oid);
+void mmr_init_oid();
 
-SCM scm_mmr_git_repository_open(SCM repo ,SCM repo_name);
-SCM scm_mmr_git_repository_index(SCM index ,SCM repo);
-void mmr_init_repository();
-
-#endif // End of __GUPPY_CEE_REPOSITORY_H__;
+#endif // End of __GUPPY_CEE_OID_H__;

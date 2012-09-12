@@ -21,44 +21,11 @@
 #endif
 
 #include <libguile.h>
-#include <git2.h>
-#include "oid.h"
+#include "lib_main.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-SCM scm_mmr_git_oid_fmt(SCM string ,SCM oid)
-#define FUNC_NAME "inner-git-oid-fmt"
+void init_guppy_cee_module()
 {
-  char *str = NULL;
-  size_t i;
-  size_t cnt = 0;
-  git_oid *o = NULL;
-  SCM ret;
-  
-  SCM_VALIDATE_STRING(1 ,string);
-  SCM_ASSERT_OID(oid);
-
-  o = (git_oid*)SCM_SMOB_DATA(oid);
-  cnt = sizeof(o->id);
-  str = (char*)malloc(cnt+1);
-  
-  for (i = 0 ;i < cnt ;i++)
-    str = fmt_one(str ,o->id[i]);
-
-  ret = scm_from_locale_string(str);
-  free(str);
-
-  return ret;
+  mmr_init_repository();
+  mmr_init_oid();
+  mmr_init_index();
 }
-#undef FUNC_NAME
-
-void mmr_init_oid()
-{
-  scm_c_define_gsubr("inner-git-oid-fmt" ,2 ,0 ,0 ,scm_mmr_git_oid_fmt);
-}
-  
-#ifdef __cplusplus
-}
-#endif

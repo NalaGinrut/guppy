@@ -1,7 +1,9 @@
+#ifndef __GUPPY_CEE_LIB_MAIN_H__
+#define __GUPPY_CEE_LIB_MAIN_H__
 /*	
  *  Copyright (C) 2012
  *	"Mu Lei" known as "NalaGinrut" <mulei@gnu.org>
- 
+
  *  Guppy is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,49 +18,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
-#include <libguile.h>
-#include <git2.h>
+#include "repository.h"
 #include "oid.h"
+#include "index.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void init_guppy_cee_module();
 
-SCM scm_mmr_git_oid_fmt(SCM string ,SCM oid)
-#define FUNC_NAME "inner-git-oid-fmt"
-{
-  char *str = NULL;
-  size_t i;
-  size_t cnt = 0;
-  git_oid *o = NULL;
-  SCM ret;
-  
-  SCM_VALIDATE_STRING(1 ,string);
-  SCM_ASSERT_OID(oid);
-
-  o = (git_oid*)SCM_SMOB_DATA(oid);
-  cnt = sizeof(o->id);
-  str = (char*)malloc(cnt+1);
-  
-  for (i = 0 ;i < cnt ;i++)
-    str = fmt_one(str ,o->id[i]);
-
-  ret = scm_from_locale_string(str);
-  free(str);
-
-  return ret;
-}
-#undef FUNC_NAME
-
-void mmr_init_oid()
-{
-  scm_c_define_gsubr("inner-git-oid-fmt" ,2 ,0 ,0 ,scm_mmr_git_oid_fmt);
-}
-  
-#ifdef __cplusplus
-}
-#endif
+#endif // End of __GUPPY_CEE_LIB_MAIN_H__;

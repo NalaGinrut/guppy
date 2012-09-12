@@ -23,8 +23,8 @@
 
 SCM scm_mmr_git_index_read(SCM index);
 SCM scm_mmr_git_index_entrycount(SCM index);
-SCM git_index_get(SCM index ,SCM n);
-
+SCM scm_mmr_git_index_get(SCM index ,SCM n);
+void mmr_init_index();
 
 
 

@@ -32,6 +32,12 @@ extern "C" {
 scm_t_bits scm_git_index_tag;
 scm_t_bits scm_git_index_entry_tag;
 
+// NOTE: It's only a SCM-POINTER. You need to parse the index_time structure with Scheme code.
+static inline SCM scm_mmr_from_index_time(git_index_time time)
+{
+  return scm_from_pointer((void*)&time);
+}
+  
 SCM scm_mmr_git_index_read(SCM index)
 #define FUNC_NAME "inner-git-index-read"
 {
@@ -84,7 +90,7 @@ SCM git_index_entrycount_unmerged(git_index *index)
 }
 #undef FUNC_NAME
   
-SCM git_index_get(SCM index ,SCM n)
+SCM scm_mmr_git_index_get(SCM index ,SCM n)
 #define FUNC_NAME "inner-git-index-get"
 {
   git_index *i = NULL;
@@ -92,7 +98,7 @@ SCM git_index_get(SCM index ,SCM n)
   git_index_entry *e = NULL;
     
   SCM_ASSERT_GIT_INDEX(index);
-  SCM_VALIDATE_NUMBER(n);
+  SCM_VALIDATE_NUMBER(2 ,n);
   
   i = (git_index*)SCM_SMOB_DATA(index);
   c = scm_from_int(n);
@@ -125,22 +131,23 @@ SCM git_index_get(SCM index ,SCM n)
   */
 
 // index entry 
-// FIXME: why we need the setter?? It should be handled with low-level libgit2
+SCM_MMR_OBJ_GETTER(index_entry ,ctime ,ctime ,scm_mmr_from_index_time);
+SCM_MMR_OBJ_GETTER(index_entry ,mtime ,mtime ,scm_mmr_from_index_time);
 SCM_MMR_OBJ_GETTER(index_entry ,dev ,dev ,scm_from_uint);
-SCM_MMR_OBJ_SETTER(index_entry ,dev ,dev ,scm_from_uint ,scm_to_uint);
-
 SCM_MMR_OBJ_GETTER(index_entry ,ino ,ino ,scm_from_uint);
-SCM_MMR_OBJ_SETTER(index_entry ,ino ,ino ,scm_from_uint ,scm_to_uint);
-
 SCM_MMR_OBJ_GETTER(index_entry ,mode ,mode ,scm_from_uint);
-SCM_MMR_OBJ_SETTER(index_entry ,mode ,mode ,scm_from_uint ,scm_to_uint);
-
 SCM_MMR_OBJ_GETTER(index_entry ,uid ,uid ,scm_from_uint);
-SCM_MMR_OBJ_SETTER(index_entry ,uid ,uid ,scm_from_uint ,scm_to_uint);
-
+SCM_MMR_OBJ_GETTER(index_entry ,oid ,oid ,scm_from_uint64);
+SCM_MMR_OBJ_GETTER(index_entry ,flags ,flags ,scm_from_uint16);
+SCM_MMR_OBJ_GETTER(index_entry ,flagse ,flagse ,scm_from_uint16);
 SCM_MMR_OBJ_GETTER(index_entry ,path ,path ,scm_from_locale_string);
 
-// we don't need ref/set! of "set"
+void mmr_init_index()
+{
+  scm_c_define_gsubr("inner-git-index-read" ,1 ,0 ,0 ,scm_mmr_git_index_read);
+  scm_c_define_gsubr("inner-git-index-entrycount" ,1 ,0 ,0 ,scm_mmr_git_index_entrycount);
+  scm_c_define_gsubr("inner-git-index-get" ,2 ,0 ,0 ,scm_mmr_git_index_read);
+}
 
 #ifdef __cplusplus
 }
